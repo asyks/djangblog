@@ -44,7 +44,7 @@ def modifyPost(request):
 
 def createAuthor(request):
   ## procedure for creating a new author
-  p = request.POST
+  p = request.body
   logging.warning(p)
   return HttpResponse('Ok')
 
