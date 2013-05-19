@@ -7,30 +7,34 @@ class Authors(models.Model):
   lastname = models.CharField(max_length=50)
   dob = models.DateField()
 
-  def write_one(self, f, l, d):
+  @classmethod
+  def write_one(cls, f, l, d):
     d = datetime.strptime(d, '%Y-%m-%d')
-    author = self(firstname=f, lastname=l, dob=d)
+    author = cls(firstname=f, lastname=l, dob=d)
     author.save()
 
-  def read_by_name(self, n):
+  @classmethod
+  def read_by_name(cls, n):
     first, last = n.split(' ')
     try:
-      author = self.objects.get(firstname=first)
+      author = cls.objects.get(firstname=first)
       if author.lastname == last:
         return author
     except DoesNotExist:
       return None
 
-  def read_by_id(self, i):
+  @classmethod
+  def read_by_id(cls, i):
     try:
-      author = self.objects.get(id=i) 
+      author = cls.objects.get(id=i) 
       return author
     except:
       return None
 
-  def read_all(self):
+  @classmethod
+  def read_all(cls):
     try:
-      authors = self.objects.all()
+      authors = cls.objects.all()
       return authors
     except:
       return None
@@ -42,36 +46,41 @@ class Posts(models.Model):
   publishdate = models.DateTimeField()
   author = models.ForeignKey(Authors)
 
-  def write_one(self, t, c, a):
+  @classmethod
+  def write_one(cls, t, c, a):
     p = datetime.utcnow()
-    a = Authors.read_by_name(a) or 'anon'
-    posts = self(title=t, content=c, publishdate=p, author=a)
+    a = Authors.read_by_name(a) or Authors.read_by_id(1)
+    posts = cls(title=t, content=c, publishdate=p, author=a)
     posts.save()
 
-  def modify(self, t, c, a, i):
+  @classmethod
+  def modify(cls, t, c, a, i):
     p = datetime.utcnow()
-    a = Authors.read_by_name(a) or 'anon'
-    posts = self(title=t, content=c, publishdate=p, author=a, id=i)
+    a = Authors.read_by_name(a) or Authors.read_by_id(1)
+    posts = cls(title=t, content=c, publishdate=p, author=a, id=i)
     posts.save()
     pass
 
-  def read_by_title(self, t):
+  @classmethod
+  def read_by_title(cls, t):
     try:
-      post = self.objects.get(title=t)
+      post = cls.objects.get(title=t)
       return post
     except:
       return None
 
-  def read_by_id(self, i):
+  @classmethod
+  def read_by_id(cls, i):
     try:
-      post = self.objects.get(id=i)
+      post = cls.objects.get(id=i)
       return post
     except:
       return None
 
-  def read_all(self):
+  @classmethod
+  def read_all(cls):
     try:
-      posts = self.objects.all()
+      posts = cls.objects.all()
       return posts
     except:
       return None
