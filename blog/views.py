@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpRequest
 from blog.models import Authors, Posts
 from django.template import loader, Context
+from django.views.decorators.http import require_http_methods
 import json, logging
 
 def index(request):
@@ -45,11 +46,13 @@ def modifyPost(request):
   request = HttpRequest.body
   pass
 
+@require_http_methods(["GET", "POST"])
 def createAuthor(request):
-  ## procedure for creating a new author
-  p = request.body
-  logging.warning(p)
-  return HttpResponse('Ok')
+  body = request.body
+  body = json.loads(body)
+  Authors.write_one(f=body.get('firstname'),
+    l=body.get('lastname'),d=body.get('dob'))
+  return HttpResponse('OK')
 
 def listAuthor(request):
   ## procedure for returning details of an author
