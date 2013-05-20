@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+{% load staticfiles %}
+<head>
+<title>DjanBlog Form</title>
+<meta content="text/html" charset="utf-8">
+<script type="text/javascript" src={% static "ajax.js" %}></script>
+</head>
+
+<body>
+	<div id="author-form">
+		<form>
+			<div>
+				<label>First Name:</label>
+				<input type="text" name="firstname">
+			</div>
+			<div>
+				<label>Last Name:</label>
+				<input type="text" name="firstname">
+			</div>
+			<div>
+				<label>Date of Birth:</label>
+				<input type="date" name="firstname">
+			</div>
+			<div>
+	 			<input type="submit" action='/'>
+			</div>
+		</form>
+	</div>
+	<div>
+		<button type="button" onclick="ajax.send()">Send Request</button>
+	</div>
+</body>
+
+</html>

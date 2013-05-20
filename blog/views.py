@@ -1,10 +1,13 @@
 from django.http import HttpResponse, HttpRequest
 from blog.models import Authors, Posts
+from django.template import loader, Context
 import json, logging
 
 def index(request):
   request = HttpRequest.body
-  response = HttpResponse(content='Hello World!', content_type='text/html; charset=utf-8')
+  template = loader.get_template('index.html')
+  c = Context({})
+  response = HttpResponse(content=template.render(c), content_type='text/html; charset=utf-8')
   return response
 
 def listAllAuthors(request):
