@@ -50,16 +50,15 @@ class Posts(models.Model):
   def write_one(cls, t, c, a):
     p = datetime.utcnow()
     a = Authors.read_by_name(a) or Authors.read_by_id(1)
-    posts = cls(title=t, content=c, publishdate=p, author=a)
-    posts.save()
+    post = cls(title=t, content=c, publishdate=p, author=a)
+    post.save()
 
   @classmethod
   def modify(cls, t, c, a, i):
     p = datetime.utcnow()
     a = Authors.read_by_name(a) or Authors.read_by_id(1)
-    posts = cls(title=t, content=c, publishdate=p, author=a, id=i)
-    posts.save()
-    pass
+    post = cls(title=t, content=c, publishdate=p, author=a, id=i)
+    post.save()
 
   @classmethod
   def read_by_title(cls, t):
@@ -84,3 +83,12 @@ class Posts(models.Model):
       return posts
     except:
       return None
+
+  @classmethod
+  def delete_one(cls, i):
+    try:
+      post = cls.objects.get(id=i)
+      post.delete()
+      return True
+    except:
+      return False

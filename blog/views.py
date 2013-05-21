@@ -13,40 +13,23 @@ def index(request):
 
 def listAllAuthors(request):
   allAuthors = Authors.read_all()
-  allAuthors = [{'firstname':a.firstname,'lastname':a.lastname,'dob':a.dob.strftime('%Y-%m-%d')} for a in allAuthors]
+  allAuthors = [{'firstname':a.firstname,'lastname':a.lastname,'dob':a.dob.strftime('%Y-%m-%d'),'id':a.id} for a in allAuthors]
   authorsJson = json.dumps(allAuthors, sort_keys=True, indent=4, separators=(',', ': '))
   response = HttpResponse(content=authorsJson, content_type='application/json; charset=utf-8')
   return response
 
-def listAllPosts(request):
-	## procedure for listing all blog posts
-  pass
+def listAuthor(request):
+  body = request.body
+  try: 
+    body = json.loads(body)
+    a = Authors.read_by_id(int(body.get('id'))) or {}
+    author = {'firstname':a.firstname,'lastname':a.lastname,'dob':a.dob.strftime('%Y-%m-%d'),'id':a.id}
+  except:
+    author = {} 
+  authorJson = json.dumps(author, sort_keys=True, indent=4, separators=(',', ': '))
+  response = HttpResponse(content=authorJson, content_type='application/json; charset=utf-8')
+  return response
 
-def listPost(request):
-	## procedure for returning details of a post
-  pass
-
-def createPost(request):
-  ## procedure for creating a new blog post
-  request = HttpRequest.body
-  pass
-
-def createPost(request):
-  ## procedure for creating a new blog post
-  request = HttpRequest.body
-  pass
-
-def deletePost(request):
-  ## procedure for deleting a blog post
-  request = HttpRequest.body
-  pass
-
-def modifyPost(request):
-  ## procedure for modiftying a blog post
-  request = HttpRequest.body
-  pass
-
-@require_http_methods(["GET", "POST"])
 def createAuthor(request):
   body = request.body
   body = json.loads(body)
@@ -54,21 +37,41 @@ def createAuthor(request):
     l=body.get('lastname'),d=body.get('dob'))
   return HttpResponse('OK')
 
-def listAuthor(request):
-  ## procedure for returning details of an author
-  pass
+def listAllPosts(request):
+  allPosts = Posts.read_all()
+  allPosts = [{'title':p.title,'content':p.content,'publishdate':p.publishdate.strftime('%Y-%m-%d'),'author':p.author.id,'id':p.id} for p in allPosts]
+  postsJson = json.dumps(allPosts, sort_keys=True, indent=4, separators=(',', ': '))
+  response = HttpResponse(content=postsJson, content_type='application/json; charset=utf-8')
+  return response
 
-## returning json
-##jsonContent = 'application/json; charset=utf-8'
-##json.dumps(object, sort_keys=True, indent=4, seperators=(',', ': '))
+def listPost(request):
+  body = request.body
+  try: 
+    body = json.loads(body)
+    p = Posts.read_by_id(int(body.get('id'))) or {}
+    post = {'title':p.title,'content':p.content,'publishdate':p.publishdate.strftime('%Y-%m-%d'),'author':p.author.id,'id':p.id}
+  except:
+    post = {} 
+  postJson = json.dumps(post, sort_keys=True, indent=4, separators=(',', ': '))
+  response = HttpResponse(content=postJson, content_type='application/json; charset=utf-8')
+  return response
 
-## getting json from request body
-## HttpRequest.body
-"""
-class AuthorsView(ListView):
-  model = Authors
+def createPost(request):
+  body = request.body
+  body = json.loads(body)
+  Posts.write_one(t=body.get('title'),
+    c=body.get('content'), a=body.get('author'))
+  return HttpResponse('OK')
 
-  def head(self, *args, **kwargs):
-    response = HttpResponse('Hello World!')
-    return response
-"""
+def modifyPost(request):
+  body = request.body
+  body = json.loads(body)
+  Posts.write_one(t=body.get('title'), c=body.get('content'), 
+    a=body.get('author'), i=body.get('id'))
+  return HttpResponse('OK')
+
+def deletePost(request):
+  body = request.body
+  body = json.loads(body)
+  Posts.delete_one(body.get('id'))
+  return HttpResponse('OK')
